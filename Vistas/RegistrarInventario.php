@@ -341,7 +341,7 @@ $correo = $_SESSION['usuario_correo'] ?? 'usuario@nextgen.com';
 
     <!-- Otros accesos -->
     <a href="ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
-    <a href="auditoria.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
+    <a href="../Controladores/AuditoriaController.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
   </nav>
 
     <main class="main-content">

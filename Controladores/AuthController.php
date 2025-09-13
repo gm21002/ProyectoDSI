@@ -48,10 +48,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($usuario && $contrasena === $usuario['contrasena']) {
         $_SESSION['usuario_id'] = $usuario['id'];
         $_SESSION['usuario_correo'] = $usuario['correo'];
+
+        // ✅ Agregado: mensaje de bienvenida para el toast
+        $_SESSION['bienvenida'] = "¡Bienvenido, " . $usuario['correo'] . "!";
+        
         header("Location: ../Vistas/Dashboard.php");
         exit;
     } else {
-        header("Location: ../Vistas/login.php?error=1");
+        header("Location: ../Vistas/login.php?error=Credenciales incorrectas.");
         exit;
     }
 } else {

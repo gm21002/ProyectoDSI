@@ -294,7 +294,8 @@ foreach ($limiteModel->listarTodo() as $lim) {
     }
 
     .actions input[type="text"] {
-      flex: 1;
+      width: 300px;
+      flex: none;
       padding: 8px 12px;
       border-radius: 8px;
       border: none;
@@ -480,13 +481,12 @@ foreach ($limiteModel->listarTodo() as $lim) {
       <div class="submenu">
         <a href="RegistrarSalida.php">Registrar Salida</a>
         <a href="Salidas.php">Reporte de Salidas</a>
-        <!-- Puedes agregar más si necesitas -->
       </div>
     </div>
 
     <!-- Otros accesos -->
     <a href="ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
-    <a href="auditoria.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
+    <a href="../Controladores/AuditoriaController.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
   </nav>
 
     <main class="main-content">

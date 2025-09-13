@@ -280,7 +280,8 @@ $categorias = $categoriaModel->obtenerCategorias();
     }
 
     .actions input[type="text"] {
-      flex: 1;
+      width: 300px;
+      flex: none;
       padding: 8px 12px;
       border-radius: 8px;
       border: none;
@@ -472,7 +473,7 @@ $categorias = $categoriaModel->obtenerCategorias();
 
     <!-- Otros accesos -->
     <a href="ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
-    <a href="auditoria.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
+    <a href="../Controladores/AuditoriaController.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
   </nav>
 
     <main class="main-content">
