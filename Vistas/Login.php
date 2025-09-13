@@ -200,7 +200,7 @@
   />
 
 <?php if (isset($_GET['error'])): ?>
-  <div id="toast-error" class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-4" role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 9999;">
+  <div id="toast-error" class="toast align-items-center text-bg-danger border-0 position-fixed top-0 end-0 m-4" role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 9999;">
     <div class="d-flex">
       <div class="toast-body">
         <?php echo htmlspecialchars($_GET['error']); ?>
@@ -290,7 +290,6 @@
       }
     });
 </script>
-
 </body>
 </html>
 
