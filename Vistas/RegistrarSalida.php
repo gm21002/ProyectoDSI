@@ -398,9 +398,17 @@ tbody tr:hover {
       </div>
     </div>
 
-    <!-- Otros accesos -->
-    <a href="ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
-    <a href="../Controladores/AuditoriaController.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
+  <a href="../Vistas/ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
+            <div class="menu-item">
+        <button class="menu-toggle">
+          <i class="bi bi-clipboard-data"></i> Auditoria
+          <i class="bi bi-chevron-down"></i>
+        </button>
+        <div class="submenu">
+          <a href="../Controladores/AuditoriaController.php">Movimientos</a>
+          <a href="../Vistas/Historico.php">Historico</a>
+        </div>
+      </div>
   </nav>
 
     <main class="main-content">
