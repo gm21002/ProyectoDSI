@@ -1,6 +1,13 @@
 <?php
-// Vistas/Auditoria.php
+session_start();
+
+// Después de obtener los filtros del formulario
+$_SESSION['ultimos_filtros'] = $filtros;
+
+// Guardar también los resultados en sesión (opcional)
+$_SESSION['ultimos_resultados'] = $movimientos;
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -50,6 +57,7 @@
       margin-bottom: 32px;
       text-align: center;
       background: linear-gradient(135deg, #22d3ee, #2563eb);
+      background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 800;
@@ -75,107 +83,299 @@
       font-size: 1.2rem;
     }
 
+    /* Submenú */
     .menu-item {
       display: flex;
       flex-direction: column;
     }
-
     .menu-toggle {
       background: none;
       border: none;
-      color: #cbd5e1;
-      text-align: left;
-      padding: 12px 16px;
-      border-radius: 8px;
+      color: inherit;
+      font: inherit;
+      padding: 10px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-weight: 600;
+      gap: 8px;
       cursor: pointer;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s ease;
     }
-
     .menu-toggle:hover {
-      background: rgba(255 255 255 / 0.1);
+      background: rgba(255, 255, 255, 0.1);
     }
-
+    .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+    }
     .submenu {
-      display: flex;
+      display: none;
       flex-direction: column;
-      margin-left: 16px;
-      margin-top: 4px;
-      margin-bottom: 8px;
+      margin-left: 24px;
+      margin-top: 8px;
     }
-
     .submenu a {
-      padding: 6px 12px;
-      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: 6px;
+      color: #cbd5e1;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .submenu a:hover,
+    .submenu a.active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .menu-item.open .submenu {
+      display: flex;
+    }
+    .menu-item.open .chevron {
+      transform: rotate(180deg);
     }
 
     .main-content {
       flex: 1;
-      padding: 40px;
+      padding: 30px;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
 
     .header h1 {
       font-size: 2rem;
       font-weight: 800;
       background: linear-gradient(135deg, #22d3ee, #2563eb);
+      background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     .content {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1100px;
+      margin: 0 auto;
       background: rgba(255 255 255 / 0.07);
       backdrop-filter: blur(10px);
       border-radius: 16px;
-      padding: 32px 28px;
+      padding: 25px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.5);
       color: #cbd5e1;
+    }
+
+    .filter-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .filter-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #f0f4f8;
     }
 
     .form-control, .form-select {
       background: rgba(255,255,255,0.1);
       color: #f0f4f8;
       border: none;
+      height: 42px;
+    }
+
+    .form-control::placeholder {
+      color: #cbd5e1;
+      opacity: 0.8;
     }
 
     .form-control:focus, .form-select:focus {
       background: rgba(255,255,255,0.2);
       outline: 2px solid #22d3ee;
       color: white;
+      box-shadow: none;
     }
 
-    .btn-primary {
-      background-color: #2563eb;
+    .btn-filter {
+      background-color: white;
+      color: #0a2540;
       border: none;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-filter:hover {
+      background-color: #f0f0f0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-clear {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-clear:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
     }
 
-    .btn-secondary {
-      background-color: #64748b;
-      border: none;
+    /* ESTILOS MEJORADOS PARA LA TABLA */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 20px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
     }
 
     table {
-      margin-top: 24px;
-      background-color: rgba(255,255,255,0.05);
-      color: #f8fafc;
+      width: 100%;
+      border-collapse: collapse;
+      color: #e0e7ff;
     }
 
-    thead {
+    table thead {
       background: linear-gradient(135deg, #22d3ee, #2563eb);
       color: white;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    tbody tr {
+      transition: background 0.3s ease;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    tbody tr:hover {
+      background: rgba(34, 211, 238, 0.15);
+    }
+
+    .badge {
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    
+    .bg-success {
+      background-color: rgba(40, 167, 69, 0.9) !important;
+      color: white !important;
+    }
+    
+    .bg-danger {
+      background-color: rgba(220, 53, 69, 0.9) !important;
+      color: white !important;
+    }
+
+    .success-message {
+      background: rgba(101, 218, 138, 0.15);
+      color: #65da8a;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-weight: 600;
+      border-left: 4px solid #65da8a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .alert {
       background: rgba(255,255,255,0.1);
       color: #fbbf24;
+      padding: 12px 16px;
       font-weight: 600;
+      border: none;
+      border-left: 4px solid #fbbf24;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    /* Paginación */
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    
+    .pagination {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .page-item {
+      margin: 0;
+    }
+    
+    .page-link {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .page-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .page-item.active .page-link {
+      background: linear-gradient(135deg, #22d3ee, #2563eb);
+      border-color: #22d3ee;
+      color: white;
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 20px 10px;
+      }
+      .main-content {
+        padding: 20px;
+      }
+      .content {
+        padding: 20px;
+      }
+    }
+
+    /* Estilos para alinear los botones a la izquierda */
+    .button-container {
+      display: flex;
+      justify-content: flex-start;
+      gap: 12px;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -215,7 +415,16 @@
       </div>
 
       <a href="../Vistas/ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
-      <a href="../Controladores/AuditoriaController.php"><i class="bi bi-clipboard-data"></i> Auditoría</a>
+            <div class="menu-item">
+        <button class="menu-toggle">
+          <i class="bi bi-clipboard-data"></i> Auditoria
+          <i class="bi bi-chevron-down"></i>
+        </button>
+        <div class="submenu">
+          <a href="../Controladores/AuditoriaController.php">Movimientos</a>
+          <a href="../Vistas/Historico.php">Historico</a>
+        </div>
+      </div>
     </nav>
 
     <main class="main-content">
@@ -224,65 +433,118 @@
       </header>
 
       <section class="content">
-        <h4 class="mb-4">Consultar Historial de Movimientos</h4>
-        <form method="GET" class="row g-3 mb-4">
-          <div class="col-md-3">
-            <input type="text" name="producto" class="form-control" placeholder="Producto" value="<?= htmlspecialchars($_GET['producto'] ?? '') ?>">
-          </div>
-          <div class="col-md-3">
-            <input type="text" name="usuario" class="form-control" placeholder="Usuario" value="<?= htmlspecialchars($_GET['usuario'] ?? '') ?>">
-          </div>
-          <div class="col-md-2">
-            <select name="tipo" class="form-select">
-              <option value="">Tipo</option>
-              <option <?= ($_GET['tipo'] ?? '') == 'Entrada' ? 'selected' : '' ?>>Entrada</option>
-              <option <?= ($_GET['tipo'] ?? '') == 'Salida' ? 'selected' : '' ?>>Salida</option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <input type="date" name="desde" class="form-control" value="<?= htmlspecialchars($_GET['desde'] ?? '') ?>">
-          </div>
-          <div class="col-md-2">
-            <input type="date" name="hasta" class="form-control" value="<?= htmlspecialchars($_GET['hasta'] ?? '') ?>">
-          </div>
-          <div class="col-12 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary me-2"><i class="bi bi-funnel-fill"></i>&nbsp; Filtrar</button>
-            <a href="AuditoriaController.php" class="btn btn-secondary"><i class="bi bi-x-circle"></i>&nbsp; Limpiar</a>
-          </div>
-        </form>
+        <div class="filter-section">
+          <div class="filter-title">Consultar Historial de Movimientos</div>
+          <form method="GET" class="row g-3">
+            <div class="col-md-3">
+              <input type="text" name="producto" class="form-control" placeholder="Producto" value="<?= htmlspecialchars($_GET['producto'] ?? '') ?>">
+            </div>
+            <div class="col-md-3">
+              <input type="text" name="usuario" class="form-control" placeholder="Usuario" value="<?= htmlspecialchars($_GET['usuario'] ?? '') ?>">
+            </div>
+            <div class="col-md-2">
+              <select name="tipo" class="form-select">
+                <option value="">Tipo</option>
+                <option <?= ($_GET['tipo'] ?? '') == 'Entrada' ? 'selected' : '' ?>>Entrada</option>
+                <option <?= ($_GET['tipo'] ?? '') == 'Salida' ? 'selected' : '' ?>>Salida</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <input type="date" name="desde" class="form-control" value="<?= htmlspecialchars($_GET['desde'] ?? '') ?>">
+            </div>
+            <div class="col-md-2">
+              <input type="date" name="hasta" class="form-control" value="<?= htmlspecialchars($_GET['hasta'] ?? '') ?>">
+            </div>
+            
+            <!-- Contenedor para los botones alineados a la izquierda -->
+<div class="col-12">
+  <div class="button-container d-flex justify-content-end">
+    <button type="submit" class="btn btn-filter me-2"><i class="bi bi-funnel-fill"></i>&nbsp; Filtrar</button>
+    <a href="AuditoriaController.php" class="btn btn-clear"><i class="bi bi-x-circle"></i>&nbsp; Limpiar</a>
+    <a href="pdf_movimiento_inventario.php" target="_blank" class="btn btn-primary">📄 Generar PDF</a>
+  </div>
+</div>
+          </form>
+        </div>
 
         <?php if (!empty($movimientos)): ?>
-          <p><strong>Historial cargado correctamente.</strong></p>
-          <table class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Fecha/Hora</th>
-                <th>Usuario</th>
-                <th>Motivo</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($movimientos as $row): ?>
+          <div class="success-message">
+            <i class="bi bi-check-circle-fill"></i> Historial cargado correctamente.
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
                 <tr>
-                  <td><?= htmlspecialchars($row['tipo']) ?></td>
-                  <td><?= htmlspecialchars($row['producto']) ?></td>
-                  <td><?= htmlspecialchars($row['cantidad']) ?></td>
-                  <td><?= htmlspecialchars($row['fecha']) ?></td>
-                  <td><?= htmlspecialchars($row['usuario'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($row['motivo'] ?? '') ?></td>
+                  <th>Tipo</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Fecha/Hora</th>
+                  <th>Usuario</th>
+                  <th>Motivo</th>
                 </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <?php 
+                // Mostrar solo 6 registros por página
+                $page = $_GET['page'] ?? 1;
+                $perPage = 4;
+                $start = ($page - 1) * $perPage;
+                $end = min($start + $perPage, count($movimientos));
+                
+                for ($i = $start; $i < $end; $i++): 
+                  $row = $movimientos[$i];
+                ?>
+                  <tr>
+                    <td>
+                      <span class="badge <?= $row['tipo'] == 'entrada' ? 'bg-success' : 'bg-danger' ?>">
+                        <?= htmlspecialchars($row['tipo']) ?>
+                      </span>
+                    </td>
+                    <td><?= htmlspecialchars($row['producto']) ?></td>
+                    <td><?= htmlspecialchars($row['cantidad']) ?></td>
+                    <td><?= htmlspecialchars($row['fecha']) ?></td>
+                    <td><?= htmlspecialchars($row['usuario'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($row['motivo'] ?? '') ?></td>
+                  </tr>
+                <?php endfor; ?>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Paginación -->
+          <?php if (count($movimientos) > $perPage): ?>
+            <div class="pagination-container">
+              <ul class="pagination">
+                <?php for ($p = 1; $p <= ceil(count($movimientos) / $perPage); $p++): ?>
+                  <li class="page-item <?= $p == $page ? 'active' : '' ?>">
+                    <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['page' => $p])) ?>"><?= $p ?></a>
+                  </li>
+                <?php endfor; ?>
+              </ul>
+            </div>
+          <?php endif; ?>
+
         <?php else: ?>
           <div class="alert alert-warning mt-4">No se encontraron resultados para los filtros seleccionados.</div>
         <?php endif; ?>
       </section>
     </main>
   </div>
+
+  <script>
+    function toggleDropdown(){
+      const d = document.getElementById('dropdownMenu');
+      d.style.display = d.style.display === 'block' ? 'none' : 'block';
+    }
+    window.addEventListener('click', e => {
+      const m = document.getElementById('userMenu');
+      if (!m.contains(e.target)) {
+        document.getElementById('dropdownMenu').style.display = 'none';
+      }
+    });
+    document.querySelectorAll('.menu-toggle').forEach(btn => {
+      btn.addEventListener('click', () => btn.parentElement.classList.toggle('open'));
+    });
+  </script>
 </body>
 </html>
-
