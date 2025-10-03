@@ -45,7 +45,7 @@ class AuditoriaModel {
         if (!empty($filtros['hasta'])) {
             $sql .= " AND m.fecha_hora <= :hasta";
             $params[':hasta'] = $filtros['hasta'] . ' 23:59:59';
-        }
+        } 
 
         $sql .= " ORDER BY m.fecha_hora DESC";
 
