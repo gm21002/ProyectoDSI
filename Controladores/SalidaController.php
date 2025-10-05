@@ -1,5 +1,7 @@
 <?php
-// session_start(); // Comentado porque ya se llama desde la vista salidas.php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['usuario_correo'])) {
     header('Location: ../Vistas/Login.php');

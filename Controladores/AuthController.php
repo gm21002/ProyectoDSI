@@ -4,31 +4,32 @@ require_once "../Modelos/UsuarioModel.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Si NO vienen datos de login, asumimos que es un logout (por ejemplo, desde un formulario con solo botón)
-    if (empty($_POST['correo']) && empty($_POST['contrasena'])) {
-        session_destroy();
-        header("Location: ../Vistas/login.php");
-        exit;
-    }
+if (isset($_POST['logout']) && $_POST['logout'] == '1') {
+    session_unset();
+    session_destroy();
+    header("Location: ../Vistas/Login.php");
+    exit;
+}
+
 
     $correo = trim($_POST['correo'] ?? '');
     $contrasena = trim($_POST['contrasena'] ?? '');
 
     // Validación de campos vacíos
     if (empty($correo) || empty($contrasena)) {
-        header("Location: ../Vistas/login.php?error=Todos los campos son obligatorios.");
+        header("Location: ../Vistas/Login.php?error=Todos los campos son obligatorios.");
         exit;
     }
 
     // Validación formato de correo
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        header("Location: ../Vistas/login.php?error=El formato del correo electrónico no es válido.");
+        header("Location: ../Vistas/Login.php?error=El formato del correo electrónico no es válido.");
         exit;
     }
 
     // Validación de longitud y complejidad de contraseña
     if (strlen($contrasena) < 8 || strlen($contrasena) > 12) {
-        header("Location: ../Vistas/login.php?error=La contraseña debe tener entre 8 y 12 caracteres.");
+        header("Location: ../Vistas/Login.php?error=La contraseña debe tener entre 8 y 12 caracteres.");
         exit;
     }
 
@@ -36,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         !preg_match('/[a-z]/', $contrasena) || 
         !preg_match('/[0-9]/', $contrasena) || 
         !preg_match('/[\W_]/', $contrasena)) {
-        header("Location: ../Vistas/login.php?error=La contraseña debe incluir mayúsculas, minúsculas, números y un carácter especial.");
+        header("Location: ../Vistas/Login.php?error=La contraseña debe incluir mayúsculas, minúsculas, números y un carácter especial.");
         exit;
     }
 
@@ -55,11 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../Vistas/Dashboard.php");
         exit;
     } else {
-        header("Location: ../Vistas/login.php?error=Credenciales incorrectas.");
+        header("Location: ../Vistas/Login.php?error=Credenciales incorrectas.");
         exit;
     }
 } else {
-    header("Location: ../Vistas/login.php");
+    header("Location: ../Vistas/Login.php");
     exit;
 }
-

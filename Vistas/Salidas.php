@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 
 require_once '../Modelos/Conexion.php';
 require_once '../Modelos/CategoriaModel.php';
@@ -38,7 +38,7 @@ $fechaFin            = $fechaFin            ?? '';
     .sidebar { background: rgba(255,255,255,0.05); width: 240px; padding: 32px 16px; display: flex; flex-direction: column; gap: 16px; border-right: 1px solid rgba(255,255,255,0.1); }
     .sidebar h2 { font-size: 1.5rem; margin-bottom: 32px; text-align: center; background: linear-gradient(135deg,#22d3ee,#2563eb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; color: #cbd5e1; }
     .sidebar a, .menu-toggle { color: #cbd5e1; text-decoration: none; font-weight: 600; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 8px; transition: background 0.3s; }
-    .sidebar a:hover, .sidebar a.active, .menu-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .sidebar a:hover, .sidebar a.active, .menu-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; } 
     .menu-item { display: flex; flex-direction: column; }
     .chevron { margin-left: auto; transition: transform 0.3s; }
     .submenu { display: none; flex-direction: column; margin-left: 24px; margin-top: 8px; }
@@ -72,46 +72,80 @@ $fechaFin            = $fechaFin            ?? '';
     table tbody tr:hover { background: #3a475b; }
     table tbody tr:nth-child(even) { background: #2d3a4b; }
     hr.section-divider { border: none; border-top: 1px solid rgba(34, 211, 238, .5); margin: 20px 0; }
+      
   </style>
 </head>
 <body>
   <img src="../public/background.png" alt="Background" class="background-image" />
   <div class="dashboard-container">
-    <nav class="sidebar">
-      <h2>NextGen Distributors</h2>
-      <a href="Dashboard.php"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-      <div class="menu-item open">
-        <button class="menu-toggle"><i class="bi bi-box-seam-fill"></i> Inventario <i class="bi bi-chevron-down chevron"></i></button>
-        <div class="submenu">
-          <a href="ListarProducto.php">Productos</a>
-          <a href="ListarCategoria.php">Categorías</a>
-          <a href="ListarProveedor.php">Proveedores</a>
-          <a href="ListarInventario.php">Stock y Precios</a>
-        </div>
-      </div>
-      <a href="RegistrarProducto.php"><i class="bi bi-plus-circle-fill"></i> Registrar Entrada</a>
-      <a href="RegistrarInventario.php"><i class="bi bi-box-arrow-in-down"></i> Registrar Inventario</a>
-      <a class="active" href="salidas.php"><i class="bi bi-file-earmark-bar-graph-fill"></i> Salidas y Reportes</a>
-    </nav>
+<nav class="sidebar">
+  <h2>NextGen Distributors</h2>
+  <a href="Dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+
+  <!-- Submenú Entradas -->
+  <div class="menu-item">
+    <button type="button" class="menu-toggle">
+      <i class="bi bi-box-arrow-in-down"></i> Entradas
+      <i class="bi bi-chevron-down chevron"></i>
+    </button>
+    <div class="submenu">
+      <a href="ListarInventario.php">Inventario</a>
+      <a href="ListarProducto.php">Productos</a>
+      <a href="ListarCategoria.php">Categorías</a>
+      <a href="ListarProveedor.php">Proveedores</a>
+    </div>
+  </div>
+
+  <!-- Submenú Salidas -->
+  <div class="menu-item open">
+    <button type="button" class="menu-toggle">
+      <i class="bi bi-box-arrow-up"></i> Salidas
+      <i class="bi bi-chevron-down chevron"></i>
+    </button>
+    <div class="submenu">
+      <a href="RegistrarSalida.php">Registrar Salida</a>
+      <a href="Salidas.php" class="active">Reporte de Salidas</a>
+    </div>
+  </div>
+
+  <a href="../Vistas/ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
+
+  <!-- Auditoría -->
+  <div class="menu-item">
+    <button class="menu-toggle">
+      <i class="bi bi-clipboard-data"></i> Auditoría
+      <i class="bi bi-chevron-down"></i>
+    </button>
+    <div class="submenu">
+      <a href="../Controladores/AuditoriaController.php">Movimientos</a>
+      <a href="../Vistas/Historico.php">Histórico</a>
+    </div>
+  </div>
+</nav>
+
+
     <main class="main-content">
       <header class="header">
         <h1>Salidas y Reportes</h1>
-        <div class="user-menu" id="userMenu">
-          <button class="user-button" onclick="toggleDropdown()">
-            <i class="bi bi-person-circle"></i> <?= htmlspecialchars($correo) ?>
-          </button>
-          <ul class="dropdown" id="dropdownMenu">
-            <li><a href="#">Perfil</a></li>
-            <li><a href="../Controladores/CerrarSesion.php">Cerrar Sesión</a></li>
-          </ul>
-        </div>
+<div class="user-menu" id="userMenu">
+    <button class="user-button" onclick="toggleDropdown()">
+      <i class="bi bi-person-circle"></i> <?= htmlspecialchars($correo) ?>
+    </button>
+    <div class="dropdown" id="dropdownMenu">
+      <form action="../Controladores/AuthController.php" method="post" style="margin:0">
+        <button type="submit" name="logout" value="1" class="dropdown-item">
+          <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+        </button>
+      </form>
+    </div>
+  </div>
       </header>
 
       <!-- Reporte de Movimientos de Salida -->
       <section class="content-section">
         <h2>Reporte de Movimientos de Salida</h2>
         <div class="actions">
-          <form class="search-form" action="salidas.php" method="GET">
+          <form class="search-form" action="Salidas.php" method="GET">
             <input type="hidden" name="action" value="listarReporteSalidas">
             <input type="text" name="q" placeholder="Buscar producto o código..." value="<?= htmlspecialchars($search) ?>">
             <select name="cat">
@@ -169,7 +203,7 @@ $fechaFin            = $fechaFin            ?? '';
       <section class="content-section">
         <h2>Reporte General de Inventario</h2>
         <div class="actions">
-          <form class="search-form" action="salidas.php" method="GET">
+          <form class="search-form" action="Salidas.php" method="GET">
             <input type="hidden" name="action" value="listarReporteInventario">
             <input type="text" name="q" placeholder="Buscar producto o código..." value="<?= htmlspecialchars($search) ?>">
             <select name="cat">
@@ -182,9 +216,10 @@ $fechaFin            = $fechaFin            ?? '';
             </select>
             <button type="submit" class="btn-primary"><i class="bi bi-search"></i> Buscar</button>
           </form>
-          <a href="../Controladores/SalidaController.php?action=exportarInventarioCSV&q=<?= urlencode($search) ?>&cat=<?= $catId ?>" class="btn-secondary">
-            <i class="bi bi-download"></i> Exportar CSV
-          </a>
+<a href="../Controladores/pdf_reporte_salidas.php?q=<?= urlencode($search) ?>&cat=<?= $catId ?>&fecha_inicio=<?= urlencode($fechaInicio) ?>&fecha_fin=<?= urlencode($fechaFin) ?>" class="btn-secondary">
+  <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+</a>
+
         </div>
         <?php if(!empty($productosInventario)): ?>
           <div class="table-container">
