@@ -16,6 +16,17 @@ class InventarioModel {
     }
 
     /* ------------------------------------------------------------
+       Actualizar stock_historico si el nuevo stock lo supera
+    ------------------------------------------------------------ */
+    private function actualizarStockHistorico(int $inventario_id, int $nuevo_stock_total): bool {
+        $sql = "UPDATE inventario 
+                SET stock_historico = GREATEST(COALESCE(stock_historico, 0), ?) 
+                WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$nuevo_stock_total, $inventario_id]);
+    }
+
+    /* ------------------------------------------------------------
        Crear registro de inventario (entrada nueva)
        $data = [
          ':prod'           => int producto_id,
@@ -29,9 +40,13 @@ class InventarioModel {
     public function guardar(array $data): bool {
         $sql = "INSERT INTO inventario
                   (producto_id, proveedor_id, descripcion, precio,
-                   cantidad_stock, fecha_ingreso)
+                   cantidad_stock, fecha_ingreso, stock_historico)
                 VALUES (:prod, :prov, :desc, :precio,
-                        :cantidad_stock, :fecha)";
+                        :cantidad_stock, :fecha, :stock_historico)";
+        
+        // Agregar stock_historico al array de datos (igual a cantidad_stock inicial)
+        $data[':stock_historico'] = $data[':cantidad_stock'];
+        
         return $this->db->prepare($sql)->execute($data);
     }
 
@@ -40,15 +55,16 @@ class InventarioModel {
     ------------------------------------------------------------ */
     public function agregarStock(array $data): bool {
         // ¿ya hay inventario para el producto?
-        $st = $this->db->prepare("SELECT id, cantidad_stock
+        $st = $this->db->prepare("SELECT id, cantidad_stock, stock_historico
                                   FROM inventario
                                   WHERE producto_id = ? LIMIT 1");
         $st->execute([$data[':prod']]);
         $row = $st->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            $nuevo = $row['cantidad_stock'] + $data[':cantidad_stock'];
-
+            $nuevo_stock = $row['cantidad_stock'] + $data[':cantidad_stock'];
+            
+            // Actualizar el stock normal
             $up = $this->db->prepare("UPDATE inventario SET
                         cantidad_stock = :cant,
                         proveedor_id   = :prov,
@@ -56,17 +72,24 @@ class InventarioModel {
                         precio         = :precio,
                         fecha_ingreso  = :fecha
                       WHERE id = :id");
-            return $up->execute([
-                ':cant'  => $nuevo,
+            $result = $up->execute([
+                ':cant'  => $nuevo_stock,
                 ':prov'  => $data[':prov'],
                 ':desc'  => $data[':desc'],
                 ':precio'=> $data[':precio'],
                 ':fecha' => $data[':fecha'],
                 ':id'    => $row['id']
             ]);
+            
+            // Si la actualización fue exitosa, actualizar stock_historico si es necesario
+            if ($result) {
+                $this->actualizarStockHistorico($row['id'], $nuevo_stock);
+            }
+            
+            return $result;
         }
 
-        // si no existe, insertar
+        // si no existe, insertar nuevo producto
         return $this->guardar($data);
     }
 }

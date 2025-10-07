@@ -488,7 +488,7 @@ foreach ($limiteModel->listarTodo() as $lim) {
             <div class="menu-item">
         <button class="menu-toggle">
           <i class="bi bi-clipboard-data"></i> Auditoria
-          <i class="bi bi-chevron-down"></i>
+          <i class="bi bi-chevron-down chevron"></i>
         </button>
         <div class="submenu">
           <a href="../Controladores/AuditoriaController.php">Movimientos</a>

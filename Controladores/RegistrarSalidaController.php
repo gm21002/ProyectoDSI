@@ -16,7 +16,22 @@ $movimientoModel = new MovimientosModel();
 $productoModel = new ProductoModel();
 $db = Conexion::getInstance()->getConnection();
 
-$usuarioId = $_SESSION['usuario_id'] ?? null;
+// Obtener el ID del usuario basado en el correo de la sesión
+$usuarioCorreo = $_SESSION['usuario_correo'];
+$usuarioId = null;
+
+// Buscar el ID del usuario por su correo
+$stmt = $db->prepare("SELECT id FROM usuarios WHERE correo = ?");
+$stmt->execute([$usuarioCorreo]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($usuario) {
+    $usuarioId = $usuario['id'];
+} else {
+    // Si no encuentra el usuario, redirigir al login
+    header('Location: ../Vistas/Login.php');
+    exit();
+}
 
 // Obtener productos con stock
 $productosDisponibles = $productoModel->listarProductosActivosConStock();
@@ -46,7 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($productoId <= 0) $errores[] = "Debe seleccionar un producto.";
     if ($cantidad <= 0)   $errores[] = "La cantidad debe ser mayor que cero.";
     if (empty($descripcion)) $errores[] = "Debe especificar un motivo.";
-    if (empty($usuarioId))   $errores[] = "Usuario no identificado.";
+    
+    // Ahora $usuarioId ya está definido arriba
+    if (empty($usuarioId)) {
+        $errores[] = "Usuario no identificado.";
+    }
 
     // Obtener proveedor_id desde inventario
     $proveedorId = null;
@@ -71,14 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errores)) {
-        $exito = $movimientoModel->registrarMovimientoYActualizarStock(
-            $productoId,
-            'salida',
-            $cantidad,
-            $usuarioId,
-            $descripcion,
-            $proveedorId // <- agregado
-        );
+$exito = $movimientoModel->registrarMovimientoYActualizarStock(
+    $productoId,
+    'salida',
+    $cantidad,
+    $usuarioCorreo,  // ← USA EL CORREO EN LUGAR DEL ID
+    $descripcion,
+    $proveedorId
+);
 
         if ($exito) {
             $_SESSION['mensaje_exito'] = "Salida registrada exitosamente.";
