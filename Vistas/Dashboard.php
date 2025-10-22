@@ -381,11 +381,18 @@ $correo = $_SESSION['usuario_correo'];
       <div class="submenu">
         <a href="RegistrarSalida.php">Registrar Salida</a>
         <a href="Salidas.php">Reporte de Salidas</a>
-        <!-- Puedes agregar más si necesitas -->
       </div>
     </div>
 
   <a href="../Vistas/ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
+    <div class="menu-item">
+      <button class="menu-toggle">
+        <i class="bi bi-clipboard-data"></i> Auditoria
+        <i class="bi bi-chevron-down"></i>
+      </button>
+      <div class="submenu">
+        <a href="../Controladores/AuditoriaController.php">Movimientos</a>
+        <a href="../Vistas/Historico.php">Historico</a>
             <div class="menu-item">
         <button type="button" class="menu-toggle">
           <i class="bi bi-clipboard-data"></i> Auditoria
@@ -396,6 +403,20 @@ $correo = $_SESSION['usuario_correo'];
           <a href="../Vistas/Historico.php">Historico</a>
         </div>
       </div>
+    </div>
+
+    <!-- Submenú Usuarios -->
+    <div class="menu-item">
+      <button type="button" class="menu-toggle">
+        <i class="bi bi-people"></i> Usuarios
+        <i class="bi bi-chevron-down chevron"></i>
+      </button>
+      <div class="submenu">
+        <a href="RegistrarUsuario.php">Registrar Usuario</a>
+        <a href="EditarUsuario.php">Editar Usuario</a>
+        <a href="ListarUsuario.php">Listar Usuario</a>
+      </div>
+    </div>
   </nav>
 
     <main class="main-content">
