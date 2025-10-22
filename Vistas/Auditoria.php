@@ -6,6 +6,7 @@ $_SESSION['ultimos_filtros'] = $filtros;
 
 // Guardar también los resultados en sesión (opcional)
 $_SESSION['ultimos_resultados'] = $movimientos;
+$correo = $_SESSION['usuario_correo'];
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +18,7 @@ $_SESSION['ultimos_resultados'] = $movimientos;
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
     * { box-sizing: border-box; }
     body, html {
       margin: 0;
@@ -83,6 +84,91 @@ $_SESSION['ultimos_resultados'] = $movimientos;
       font-size: 1.2rem;
     }
 
+.header {
+  display: flex;
+  justify-content: center; /* Centra ambos elementos */
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  margin-bottom: 20px;
+  gap: 400px; /* Controla la separación entre ellos */
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #22d3ee, #2563eb);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  text-align: center;
+}
+
+    .user-menu {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 0;
+    }
+
+    .user-button {
+      background: rgba(255 255 255 / 0.1);
+      border: none;
+      color: #f0f4f8;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      display: flex;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .user-button:hover {
+      background: rgba(255 255 255 / 0.2);
+    }
+
+    .user-button i {
+      margin-right: 8px;
+    }
+
+.dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: rgba(255 255 255 / 0.07);
+  backdrop-filter: blur(10px);
+  border-radius: 8px; /* REDUCE el border-radius */
+  padding: 6px 0; /* REDUCE el padding vertical */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4); /* REDUCE la sombra */
+  min-width: 140px; /* REDUCE el ancho mínimo */
+  display: none;
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 6px 12px; /* REDUCE el padding */
+  color: #f0f4f8;
+  text-decoration: none;
+  font-weight: 500; /* REDUCE el peso de la fuente */
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 0.85rem; /* REDUCE el tamaño de fuente */
+}
+
+    .dropdown-item:hover {
+      background: rgba(255 255 255 / 0.1);
+    }
+
+    .user-menu.active .dropdown {
+      display: block;
+    }
+
     /* Submenú */
     .menu-item {
       display: flex;
@@ -139,17 +225,6 @@ $_SESSION['ultimos_resultados'] = $movimientos;
       padding: 30px;
       display: flex;
       flex-direction: column;
-    }
-
-    .header h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #22d3ee, #2563eb);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 20px;
-      text-align: center;
     }
 
     .content {
@@ -388,7 +463,7 @@ $_SESSION['ultimos_resultados'] = $movimientos;
   <div class="dashboard-container">
     <nav class="sidebar">
       <h2>NextGen Distributors</h2>
-      <a href="../Vistas/dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      <a href="../Vistas/Dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
 
       <div class="menu-item">
         <button class="menu-toggle">
@@ -418,7 +493,7 @@ $_SESSION['ultimos_resultados'] = $movimientos;
             <div class="menu-item">
         <button class="menu-toggle">
           <i class="bi bi-clipboard-data"></i> Auditoria
-          <i class="bi bi-chevron-down"></i>
+          <i class="bi bi-chevron-down chevron"></i>
         </button>
         <div class="submenu">
           <a href="../Controladores/AuditoriaController.php">Movimientos</a>
@@ -428,9 +503,21 @@ $_SESSION['ultimos_resultados'] = $movimientos;
     </nav>
 
     <main class="main-content">
-      <header class="header">
-        <h1>Auditoría de Movimientos</h1>
-      </header>
+<header class="header">
+  <h1>Auditoría de Movimientos</h1>
+  <div class="user-menu" id="userMenu">
+    <button class="user-button" onclick="toggleDropdown()">
+      <i class="bi bi-person-circle"></i> <?= htmlspecialchars($correo) ?>
+    </button>
+    <div class="dropdown" id="dropdownMenu">
+      <form action="../Controladores/AuthController.php" method="post" style="margin:0">
+        <button type="submit" name="logout" value="1" class="dropdown-item">
+          <i class="bi bi-box-arrow-right me-2"></i>&nbsp; Cerrar sesión
+        </button>
+      </form>
+    </div>
+  </div>
+</header>
 
       <section class="content">
         <div class="filter-section">

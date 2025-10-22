@@ -11,20 +11,31 @@ class MovimientosModel {
     /**
      * Registra un movimiento de inventario simple (usado en versiones anteriores).
      * $data = [
-     *   ':prod'    => int producto_id,
-     *   ':prov'    => int proveedor_id,
-     *   ':cantidad'=> int cantidad,
-     *   ':tipo'    => 'entrada' | 'salida',
-     *   ':fecha'   => string 'YYYY-MM-DD HH:MM:SS',
-     *   ':usuario' => string correo del usuario
+     *   ':prod'        => int producto_id,
+     *   ':prov'        => int proveedor_id,
+     *   ':cantidad'    => int cantidad,
+     *   ':tipo'        => 'entrada' | 'salida',
+     *   ':fecha'       => string 'YYYY-MM-DD HH:MM:SS',
+     *   ':usuario'     => string correo del usuario,
+     *   ':descripcion' => string motivo del movimiento
      * ]
      */
     public function crear(array $data): bool {
         $sql = "INSERT INTO movimientos
-                  (producto_id, proveedor_id, cantidad, tipo, fecha, usuario_correo)
+                  (producto_id, proveedor_id, cantidad, tipo, fecha, usuario_correo, descripcion)
                 VALUES
-                  (:prod, :prov, :cantidad, :tipo, :fecha, :usuario)";
-        return $this->db->prepare($sql)->execute($data);
+                  (:prod, :prov, :cantidad, :tipo, :fecha, :usuario, :descripcion)";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':prod'        => $data[':prod'],
+            ':prov'        => $data[':prov'],
+            ':cantidad'    => $data[':cantidad'],
+            ':tipo'        => $data[':tipo'],
+            ':fecha'       => $data[':fecha'],
+            ':usuario'     => $data[':usuario'],
+            ':descripcion' => $data[':descripcion'] ?? '' // Asegurar que siempre tenga un valor
+        ]);
     }
 
     /**
@@ -33,7 +44,7 @@ class MovimientosModel {
      * @param int    $productoId    ID del producto.
      * @param string $tipoMovimiento 'entrada' o 'salida'.
      * @param int    $cantidad      Cantidad a mover.
-     * @param int    $usuarioId     ID del usuario que registra el movimiento.
+     * @param string $usuarioCorreo Correo del usuario que registra el movimiento.
      * @param string $descripcion   Motivo del movimiento.
      * @param int    $proveedorId   ID del proveedor.
      * @return bool                 True si todo fue exitoso, false en caso contrario.
@@ -42,13 +53,15 @@ class MovimientosModel {
         int $productoId,
         string $tipoMovimiento,
         int $cantidad,
-        int $usuarioId,
+        string $usuarioCorreo,
         string $descripcion,
         int $proveedorId
     ): bool {
         $this->db->beginTransaction();
 
         try {
+            error_log("🟡 Iniciando transacción - ProductoID: $productoId, UsuarioCorreo: $usuarioCorreo");
+
             // 1. Obtener y bloquear stock actual
             $stmt = $this->db->prepare("SELECT cantidad_stock FROM inventario WHERE producto_id = ? FOR UPDATE");
             $stmt->execute([$productoId]);
@@ -70,29 +83,39 @@ class MovimientosModel {
             $stmt = $this->db->prepare("UPDATE inventario SET cantidad_stock = ? WHERE producto_id = ?");
             $stmt->execute([$newStock, $productoId]);
 
-            // 3. Registrar el movimiento
+            // 3. Registrar el movimiento - USANDO usuario_correo en lugar de usuario_id
             $stmt = $this->db->prepare("
                 INSERT INTO movimientos 
-                (producto_id, proveedor_id, cantidad, descripcion, tipo, fecha, usuario_correo, fecha_hora, tipo_movimiento, usuario_id)
+                (producto_id, proveedor_id, cantidad, descripcion, tipo_movimiento, usuario_correo, fecha_hora)
                 VALUES 
-                (?, ?, ?, ?, ?, NOW(), NULL, NOW(), ?, ?)
+                (?, ?, ?, ?, ?, ?, NOW())
             ");
-            $stmt->execute([
+            
+            $result = $stmt->execute([
                 $productoId,
                 $proveedorId,
                 $cantidad,
                 $descripcion,
-                $tipoMovimiento,   // campo 'tipo'
                 $tipoMovimiento,   // campo 'tipo_movimiento'
-                $usuarioId
+                $usuarioCorreo     // campo 'usuario_correo' - CORREGIDO
             ]);
 
+            error_log("🟡 Resultado de INSERT movimiento: " . ($result ? 'ÉXITO' : 'FALLO'));
+            error_log("🟡 Filas afectadas: " . $stmt->rowCount());
+            
+            if (!$result) {
+                $errorInfo = $stmt->errorInfo();
+                error_log("🔴 Error SQL: " . $errorInfo[2]);
+                throw new Exception("Error al insertar movimiento: " . $errorInfo[2]);
+            }
+
             $this->db->commit();
+            error_log("🟢 Transacción completada exitosamente");
             return true;
 
         } catch (Exception $e) {
             $this->db->rollBack();
-            error_log("Error al registrar movimiento: " . $e->getMessage());
+            error_log("🔴 Error al registrar movimiento: " . $e->getMessage());
             return false;
         }
     }
