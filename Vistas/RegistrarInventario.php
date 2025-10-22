@@ -154,6 +154,15 @@ $correo = $_SESSION['usuario_correo'] ?? 'usuario@nextgen.com';
       top:50%; left:50%; transform:translate(-50%,-50%);
       background:#0f172a; padding:20px; border-radius:12px; box-shadow:0 0 12px rgba(0,0,0,0.5);
       color: #f0f4f8;
+      width: 400px;
+    }
+    #modalProveedor input {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    #modalProveedor button {
+      margin: 5px;
+      width: calc(50% - 10px);
     }
     #overlay { top:0; left:0; width:100%; height:100%; background:#000000aa; z-index:50; }
 
@@ -343,7 +352,7 @@ $correo = $_SESSION['usuario_correo'] ?? 'usuario@nextgen.com';
             <div class="menu-item">
         <button class="menu-toggle">
           <i class="bi bi-clipboard-data"></i> Auditoria
-          <i class="bi bi-chevron-down"></i>
+         <i class="bi bi-chevron-down chevron"></i>
         </button>
         <div class="submenu">
           <a href="../Controladores/AuditoriaController.php">Movimientos</a>
@@ -390,6 +399,9 @@ $correo = $_SESSION['usuario_correo'] ?? 'usuario@nextgen.com';
         <?php if (isset($_GET['error']) && $_GET['error'] === 'maxstock'): ?>
           <div class="error">La cantidad excede el stock máximo permitido para este producto.</div>
         <?php endif; ?>
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'campos'): ?>
+          <div class="error">Por favor complete todos los campos obligatorios correctamente.</div>
+        <?php endif; ?>
 
         <?php if (!empty($_SESSION['exito'])): ?>
           <div class="exito"><?= htmlspecialchars($_SESSION['exito']); ?></div>
@@ -419,14 +431,19 @@ $correo = $_SESSION['usuario_correo'] ?? 'usuario@nextgen.com';
           </select>
           <button type="button" id="btnAgregarProveedor">+ Nuevo Proveedor</button>
 
-          <label>Descripción:</label>
-          <textarea name="descripcion" rows="3"></textarea>
+          <!-- CAMPO 1: Descripción para la tabla inventario -->
+          <label>Descripción del Producto:</label>
+          <textarea name="descripcion_inventario" rows="2" placeholder="Descripción general del producto..." required></textarea>
 
           <label>Precio*:</label>
           <input type="number" name="precio" step="0.01" min="0.01" required>
 
           <label>Cantidad*:</label>
           <input type="number" name="cantidad_stock" min="1" required>
+
+          <!-- CAMPO 2: Motivo para la tabla movimientos -->
+          <label>Motivo del Movimiento*:</label>
+          <textarea name="descripcion" rows="3" placeholder="Describa el motivo del movimiento (compra, ajuste, devolución, etc.)..." required></textarea>
 
           <label>Fecha de Ingreso*:</label>
           <input 
@@ -521,7 +538,7 @@ $correo = $_SESSION['usuario_correo'] ?? 'usuario@nextgen.com';
       const max = parseInt(opt.dataset.max || '0', 10);
       const qty = parseInt(qtyInput.value || '0', 10);
       if (max > 0 && qty > max) {
-        alert(`Atención: este producto permite un stock máximo de ${max} unidades.`);
+        alert(Atención: este producto permite un stock máximo de ${max} unidades.);
       }
     }
 

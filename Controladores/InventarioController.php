@@ -2,10 +2,11 @@
 /**
  * InventarioController.php
  *  - Registra una entrada de inventario ligada a un producto ya existente.
- *  - La tabla de destino es `inventario` con los campos:
+ *  - La tabla de destino es inventario con los campos:
  *      producto_id, proveedor_id, descripcion, precio, cantidad_stock, fecha_ingreso
  */
 session_start();
+date_default_timezone_set('America/El_Salvador');
 
 require_once '../Modelos/InventarioModel.php';
 require_once '../Modelos/ProductoModel.php';     // solo para listar en formularios o validar existencia
@@ -23,8 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $precio          = floatval($_POST['precio']       ?? 0);
     $cantidad_stock  = intval($_POST['cantidad_stock'] ?? 0);
     $fecha_ingreso   = $_POST['fecha_ingreso']         ?? date('Y-m-d');
+    // Capturar ambos campos
+$descripcion_inventario = trim($_POST['descripcion_inventario'] ?? '');
+$descripcion_movimiento = trim($_POST['descripcion'] ?? '');
 
-  // Validar fecha de ingreso: no vacía, formato YYYY-MM-DD, entre hace 30 días y hoy
+    // Validar fecha de ingreso: no vacía, formato YYYY-MM-DD, entre hace 30 días y hoy
     if (empty($fecha_ingreso)) {
         header('Location: ../Vistas/RegistrarInventario.php?error=fecha');
         exit;
@@ -47,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [
             ':prod'           => $producto_id,
             ':prov'           => $proveedor_id,
-            ':desc'           => $descripcion,
+            ':desc'           => $descripcion_inventario,
             ':precio'         => $precio,
             ':cantidad_stock' => $cantidad_stock,
             ':fecha'          => $fecha_ingreso
@@ -57,14 +61,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ok = $inventarioModel->agregarStock($data);
 
         if ($ok) {
-            // Registrar movimiento de entrada
+            // Registrar movimiento de entrada CON DESCRIPCIÓN
             $movData = [
-                ':prod'     => $producto_id,
-                ':prov'     => $proveedor_id,
-                ':cantidad' => $cantidad_stock,
-                ':tipo'     => 'entrada',
-                ':fecha'    => date('Y-m-d H:i:s'),
-                ':usuario'  => $_SESSION['usuario_correo'] ?? ''
+                ':prod'        => $producto_id,
+                ':prov'        => $proveedor_id,
+                ':cantidad'    => $cantidad_stock,
+                ':tipo'        => 'entrada',
+                ':fecha'       => date('Y-m-d H:i:s'),
+                ':usuario'     => $_SESSION['usuario_correo'] ?? '',
+                ':descripcion' => $descripcion_movimiento  // ¡ESTA ES LA LÍNEA IMPORTANTE QUE FALTABA!
             ];
             $movModel->crear($movData);
 
