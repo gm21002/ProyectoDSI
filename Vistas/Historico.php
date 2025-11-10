@@ -779,9 +779,9 @@ $pagina_atipicos = $_GET['pagina_atipicos'] ?? 1;
       <a href="../Vistas/dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
 
       <div class="menu-item">
-        <button class="menu-toggle">
-          <i class="bi bi-box-arrow-in-down"></i> Entradas
-          <i class="bi bi-chevron-down"></i>
+        <button type="button" class="menu-toggle">
+          <i class="bi bi-clipboard-data"></i> Entradas
+         <i class="bi bi-chevron-down chevron"></i>
         </button>
         <div class="submenu">
           <a href="../Vistas/ListarInventario.php">Inventario</a>
@@ -792,9 +792,9 @@ $pagina_atipicos = $_GET['pagina_atipicos'] ?? 1;
       </div>
 
       <div class="menu-item">
-        <button class="menu-toggle">
+        <button type="button" class="menu-toggle">
           <i class="bi bi-box-arrow-up"></i> Salidas
-          <i class="bi bi-chevron-down"></i>
+          <i class="bi bi-chevron-down chevron"></i>
         </button>
         <div class="submenu">
           <a href="../Vistas/RegistrarSalida.php">Registrar Salida</a>

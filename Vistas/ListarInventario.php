@@ -335,6 +335,7 @@ foreach ($limiteModel->listarTodo() as $lim) {
     .table-container {
       width: 100%;
       overflow-x: auto;
+      overflow-y: hidden;
       margin-bottom: 16px;
     }
     .pagination {
@@ -375,7 +376,9 @@ foreach ($limiteModel->listarTodo() as $lim) {
     th, td {
       padding: 12px 16px;
       text-align: left;
-      white-space: nowrap;
+      white-space: normal;
+      word-wrap: break-word;
+      max-width: 250px;
     }
 
     tbody tr:hover {
