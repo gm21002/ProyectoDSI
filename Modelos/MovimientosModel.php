@@ -60,7 +60,7 @@ class MovimientosModel {
         $this->db->beginTransaction();
 
         try {
-            error_log("🟡 Iniciando transacción - ProductoID: $productoId, UsuarioCorreo: $usuarioCorreo");
+            error_log("🟡 Iniciando transacción - ProductoID: $productoId, Tipo: $tipoMovimiento, UsuarioCorreo: $usuarioCorreo");
 
             // 1. Obtener y bloquear stock actual
             $stmt = $this->db->prepare("SELECT cantidad_stock FROM inventario WHERE producto_id = ? FOR UPDATE");
@@ -72,7 +72,7 @@ class MovimientosModel {
             }
 
             if ($tipoMovimiento === 'salida' && $cantidad > $currentStock) {
-                throw new Exception("Stock insuficiente. Actual: $currentStock");
+                throw new Exception("Stock insuficiente. Actual: $currentStock, Solicitado: $cantidad");
             }
 
             $newStock = $tipoMovimiento === 'entrada'
@@ -83,10 +83,10 @@ class MovimientosModel {
             $stmt = $this->db->prepare("UPDATE inventario SET cantidad_stock = ? WHERE producto_id = ?");
             $stmt->execute([$newStock, $productoId]);
 
-            // 3. Registrar el movimiento - USANDO usuario_correo en lugar de usuario_id
+            // 3. Registrar el movimiento - USANDO campo 'tipo' en lugar de 'tipo_movimiento'
             $stmt = $this->db->prepare("
                 INSERT INTO movimientos 
-                (producto_id, proveedor_id, cantidad, descripcion, tipo_movimiento, usuario_correo, fecha_hora)
+                (producto_id, proveedor_id, cantidad, descripcion, tipo, usuario_correo, fecha_hora)
                 VALUES 
                 (?, ?, ?, ?, ?, ?, NOW())
             ");
@@ -96,12 +96,11 @@ class MovimientosModel {
                 $proveedorId,
                 $cantidad,
                 $descripcion,
-                $tipoMovimiento,   // campo 'tipo_movimiento'
-                $usuarioCorreo     // campo 'usuario_correo' - CORREGIDO
+                $tipoMovimiento,   // ← Se guarda en el campo 'tipo'
+                $usuarioCorreo
             ]);
 
-            error_log("🟡 Resultado de INSERT movimiento: " . ($result ? 'ÉXITO' : 'FALLO'));
-            error_log("🟡 Filas afectadas: " . $stmt->rowCount());
+            error_log("🟡 Registrando movimiento - Tipo: $tipoMovimiento (campo 'tipo'), Producto: $productoId, Cantidad: $cantidad");
             
             if (!$result) {
                 $errorInfo = $stmt->errorInfo();
@@ -110,12 +109,12 @@ class MovimientosModel {
             }
 
             $this->db->commit();
-            error_log("🟢 Transacción completada exitosamente");
+            error_log("🟢 Transacción completada exitosamente - Tipo: $tipoMovimiento");
             return true;
 
         } catch (Exception $e) {
             $this->db->rollBack();
-            error_log("🔴 Error al registrar movimiento: " . $e->getMessage());
+            error_log("🔴 Error al registrar movimiento ($tipoMovimiento): " . $e->getMessage());
             return false;
         }
     }

@@ -43,7 +43,7 @@ function obtenerUltimasSalidas(): array {
         FROM movimientos m
         JOIN productos p ON p.id = m.producto_id
         JOIN usuarios u ON u.id = m.usuario_id
-        WHERE m.tipo_movimiento = 'salida'
+        WHERE m.tipo = 'salida'
         ORDER BY m.fecha_hora DESC
         LIMIT 10
     ";

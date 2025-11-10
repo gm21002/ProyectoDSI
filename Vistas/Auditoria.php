@@ -466,9 +466,9 @@ $correo = $_SESSION['usuario_correo'];
       <a href="../Vistas/Dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
 
       <div class="menu-item">
-        <button class="menu-toggle">
+          <button type="button" class="menu-toggle">
           <i class="bi bi-box-arrow-in-down"></i> Entradas
-          <i class="bi bi-chevron-down"></i>
+          <i class="bi bi-chevron-down chevron"></i>
         </button>
         <div class="submenu">
           <a href="../Vistas/ListarInventario.php">Inventario</a>
@@ -479,9 +479,9 @@ $correo = $_SESSION['usuario_correo'];
       </div>
 
       <div class="menu-item">
-        <button class="menu-toggle">
+       <button type="button" class="menu-toggle">
           <i class="bi bi-box-arrow-up"></i> Salidas
-          <i class="bi bi-chevron-down"></i>
+          <i class="bi bi-chevron-down chevron"></i>
         </button>
         <div class="submenu">
           <a href="../Vistas/RegistrarSalida.php">Registrar Salida</a>
