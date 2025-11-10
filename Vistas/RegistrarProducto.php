@@ -400,9 +400,13 @@ $correo = $_SESSION['usuario_correo'] ?? 'usuario@nextgen.com';
         <div class="form-container">
           <h1>Registrar Producto</h1>
 
-          <?php if (!empty($_GET['error'])): ?>
-            <div class="error">Error: complete todos los campos obligatorios.</div>
-          <?php endif; ?>
+      <?php if (!empty($_GET['error'])): ?>
+  <?php if ($_GET['error'] === 'duplicado'): ?>
+    <div class="error">Error: ya existe este producto.</div>
+  <?php else: ?>
+    <div class="error">Error: complete todos los campos obligatorios.</div>
+  <?php endif; ?>
+<?php endif; ?>
 
           <form action="../Controladores/ProductoController.php" method="POST">
             <label for="nombre">Nombre del Producto*:</label>

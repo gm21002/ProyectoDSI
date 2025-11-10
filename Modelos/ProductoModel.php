@@ -87,4 +87,30 @@ class ProductoModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+ * Verifica si ya existe un producto con el mismo nombre y categoría
+ */
+/**
+ * Verifica si ya existe un producto con el mismo nombre (sin importar la categoría)
+ */
+/**
+ * Verifica si ya existe un producto con el mismo nombre (sin importar la categoría)
+ */
+/**
+ * Verifica si ya existe un producto con el mismo nombre y categoría (sin importar mayúsculas/minúsculas)
+ */
+/**
+ * Verifica si ya existe un producto con el mismo nombre y categoría (sin importar mayúsculas/minúsculas)
+ */
+/**
+ * Verifica si ya existe un producto con el mismo nombre (sin importar la categoría)
+ */
+public function existeProducto(string $nombre, int $categoriaId): bool
+{
+    $sql = "SELECT 1 FROM productos WHERE LOWER(nombre) = LOWER(:n) LIMIT 1";
+    $st  = $this->db->prepare($sql);
+    $st->execute([':n' => $nombre]);
+    return (bool)$st->fetchColumn();
+}
 }

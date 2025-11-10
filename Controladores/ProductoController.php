@@ -36,6 +36,12 @@ class ProductoController
             exit;
         }
 
+        // Validar duplicado (mismo nombre en la misma categoría)
+if ($this->productoModel->existeProducto($nombre, $categoria_id)) {
+    header('Location: ../Vistas/RegistrarProducto.php?error=duplicado');
+    exit;
+}
+
         /* 3. Crear el producto (genera código único dentro) */
         $producto_id = $this->productoModel->crear($nombre, $categoria_id);
 
