@@ -384,10 +384,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-wrapper">
           <div class="form-container">
             <h1>Registrar Categoría</h1>
-
-            <?php if (!empty($_SESSION['errores'])): ?>
+              <?php if (!empty($_SESSION['errores'])): ?>
               <div class="error">
-                <ul><?php foreach ($_SESSION['errores'] as $e): ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul>
+                <ul>
+                  <?php foreach ($_SESSION['errores'] as $e): ?>
+                    <li><?= htmlspecialchars($e) ?></li>
+                  <?php endforeach; ?>
+                </ul>
               </div>
               <?php unset($_SESSION['errores']); ?>
             <?php endif; ?>
