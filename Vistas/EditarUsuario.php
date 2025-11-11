@@ -4,6 +4,10 @@ if (!isset($_SESSION['usuario_correo'])) {
         header('Location: login.php');
         exit();
 }
+
+$rolesPermitidos = ['Administrador']; // Solo administradores
+require_once "../Controladores/AuthRol.php"; 
+
 $correo = $_SESSION['usuario_correo'];
 
 require_once "../Modelos/UsuarioModel.php";

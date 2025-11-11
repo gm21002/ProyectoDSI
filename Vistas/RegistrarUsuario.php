@@ -4,6 +4,10 @@ if (!isset($_SESSION['usuario_correo'])) {
         header('Location: login.php');
         exit();
 }
+
+$rolesPermitidos = ['Administrador']; // Solo administradores
+require_once "../Controladores/AuthRol.php"; 
+
 $correo = $_SESSION['usuario_correo'];
 ?>
 <!DOCTYPE html>
@@ -290,7 +294,6 @@ $correo = $_SESSION['usuario_correo'];
                 </button>
                 <div class="submenu">
                     <a href="RegistrarUsuario.php">Registrar Usuario</a>
-                    <a href="EditarUsuario.php">Editar Usuario</a>
                     <a href="ListarUsuario.php">Listar Usuario</a>
                 </div>
             </div>
@@ -312,32 +315,38 @@ $correo = $_SESSION['usuario_correo'];
                 </div>
             </header>
             <section class="content">
-                <form method="POST" action="">
+                <form method="POST" action="../Controladores/UsuarioController.php">
+                    <input type="hidden" name="accion" value="registrar">
+
                     <div class="form-group">
                         <label>Nombre de Usuario:</label>
-                        <input type="text" name="nombre" required>
+                        <input type="text" name="nombre_usuario" required>
                     </div>
+
                     <div class="form-group">
                         <label>Correo Electrónico:</label>
                         <input type="email" name="correo" required>
                     </div>
+
                     <div class="form-group">
                         <label>Contraseña:</label>
                         <div class="password-wrapper">
-                            <input type="password" id="password" name="password" required>
+                            <input type="password" id="password" name="contrasena" required>
                             <button type="button" class="toggle-password" onclick="togglePassword()">
                                 <i class="bi bi-eye" id="toggleIcon"></i>
                             </button>
                         </div>
                     </div>
+
                     <div class="form-group">
                         <label>Rol:</label>
                         <select name="rol" required>
                             <option value="">Seleccione...</option>
-                            <option value="Administrador">Administrador</option>
-                            <option value="Encargado de Bodega">Bodeguero</option>
+                            <option value="administrador">Administrador</option>
+                            <option value="bodeguero">Bodeguero</option>
                         </select>
                     </div>
+
                     <button type="submit">Guardar Usuario</button>
                 </form>
             </section>

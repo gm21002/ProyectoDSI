@@ -4,6 +4,10 @@ if (!isset($_SESSION['usuario_correo'])) {
         header('Location: login.php');
         exit();
 }
+
+$rolesPermitidos = ['Administrador']; // Solo administradores
+require_once "../Controladores/AuthRol.php"; 
+
 $correo = $_SESSION['usuario_correo'];
 require_once "../Modelos/UsuarioModel.php";
 $usuarioModel = new UsuarioModel();
@@ -302,7 +306,6 @@ $usuarios = $usuarioModel->obtenerTodosUsuarios();
                 </button>
                 <div class="submenu">
                     <a href="RegistrarUsuario.php">Registrar Usuario</a>
-                    <a href="EditarUsuario.php">Editar Usuario</a>
                     <a href="ListarUsuario.php">Listar Usuario</a>
                 </div>
             </div>

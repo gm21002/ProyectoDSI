@@ -367,49 +367,7 @@ tbody tr:hover {
   <img src="../public/background.png" alt="Background" class="background-image" />
 
   <div class="dashboard-container">
-  <nav class="sidebar">
-    <h2>NextGen Distributors</h2>
-    <a href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    
-    <!-- Submenú Entradas -->
-    <div class="menu-item">
-      <button type="button" class="menu-toggle">
-        <i class="bi bi-box-arrow-in-down"></i> Entradas
-        <i class="bi bi-chevron-down chevron"></i>
-      </button>
-      <div class="submenu">
-        <a href="ListarInventario.php">Inventario</a>
-        <a href="ListarProducto.php">Productos</a>
-        <a href="ListarCategoria.php">Categorías</a>
-        <a href="ListarProveedor.php">Proveedores</a>
-      </div>
-    </div>
-
-    <!-- Submenú Salidas -->
-    <div class="menu-item open">
-      <button type="button" class="menu-toggle">
-        <i class="bi bi-box-arrow-up"></i> Salidas
-        <i class="bi bi-chevron-down chevron"></i>
-      </button>
-      <div class="submenu">
-        <a href="RegistrarSalida.php" class="active">Registrar Salida</a>
-        <a href="Salidas.php">Reporte de Salidas</a>
-        <!-- Puedes agregar más si necesitas -->
-      </div>
-    </div>
-
-  <a href="../Vistas/ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
-            <div class="menu-item">
-        <button class="menu-toggle">
-          <i class="bi bi-clipboard-data"></i> Auditoria
-         <i class="bi bi-chevron-down chevron"></i>
-        </button>
-        <div class="submenu">
-          <a href="../Controladores/AuditoriaController.php">Movimientos</a>
-          <a href="../Vistas/Historico.php">Historico</a>
-        </div>
-      </div>
-  </nav>
+  <?php include 'sidebar.php'; ?>
 
     <main class="main-content">
       <div class="header">

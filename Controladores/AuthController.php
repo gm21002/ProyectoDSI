@@ -46,12 +46,14 @@ if (isset($_POST['logout']) && $_POST['logout'] == '1') {
     $usuario = $usuarioModel->obtenerUsuarioPorCorreo($correo);
 
     // Aquí la validación para login
-    if ($usuario && $contrasena === $usuario['contrasena']) {
+    if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
         $_SESSION['usuario_id'] = $usuario['id'];
         $_SESSION['usuario_correo'] = $usuario['correo'];
+        $_SESSION['usuario_nombre'] = $usuario['nombre_usuario'];
+        $_SESSION['usuario_rol'] = $usuario['rol'];
 
-        // ✅ Agregado: mensaje de bienvenida para el toast
-        $_SESSION['bienvenida'] = "¡Bienvenido, " . $usuario['correo'] . "!";
+        // Mensaje de bienvenida para el toast
+        $_SESSION['bienvenida'] = "¡Bienvenido, " . $usuario['nombre_usuario'] . "!";
         
         header("Location: ../Vistas/Dashboard.php");
         exit;

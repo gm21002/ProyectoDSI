@@ -8,7 +8,6 @@ class UsuarioModel {
         $this->pdo = Conexion::getInstance()->getConnection();
     }
 
-    // Ya existente
     public function obtenerUsuarioPorCorreo($correo) {
         $sql = "SELECT * FROM usuarios WHERE correo = :correo LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
@@ -23,7 +22,6 @@ class UsuarioModel {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Ya existente
     public function actualizarUltimoAcceso($usuarioId) {
         $sql = "UPDATE usuarios SET ultimo_acceso = NOW() WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);

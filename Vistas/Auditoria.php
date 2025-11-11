@@ -461,46 +461,7 @@ $correo = $_SESSION['usuario_correo'];
        onerror="this.style.display='none'" />
 
   <div class="dashboard-container">
-    <nav class="sidebar">
-      <h2>NextGen Distributors</h2>
-      <a href="../Vistas/Dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
-
-      <div class="menu-item">
-        <button class="menu-toggle">
-          <i class="bi bi-box-arrow-in-down"></i> Entradas
-          <i class="bi bi-chevron-down"></i>
-        </button>
-        <div class="submenu">
-          <a href="../Vistas/ListarInventario.php">Inventario</a>
-          <a href="../Vistas/ListarProducto.php">Productos</a>
-          <a href="../Vistas/ListarCategoria.php">Categorías</a>
-          <a href="../Vistas/ListarProveedor.php">Proveedores</a>
-        </div>
-      </div>
-
-      <div class="menu-item">
-        <button class="menu-toggle">
-          <i class="bi bi-box-arrow-up"></i> Salidas
-          <i class="bi bi-chevron-down"></i>
-        </button>
-        <div class="submenu">
-          <a href="../Vistas/RegistrarSalida.php">Registrar Salida</a>
-          <a href="../Vistas/Salidas.php">Reporte de Salidas</a>
-        </div>
-      </div>
-
-      <a href="../Vistas/ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
-            <div class="menu-item">
-        <button class="menu-toggle">
-          <i class="bi bi-clipboard-data"></i> Auditoria
-          <i class="bi bi-chevron-down chevron"></i>
-        </button>
-        <div class="submenu">
-          <a href="../Controladores/AuditoriaController.php">Movimientos</a>
-          <a href="../Vistas/Historico.php">Historico</a>
-        </div>
-      </div>
-    </nav>
+  <?php include 'sidebar.php'; ?>
 
     <main class="main-content">
 <header class="header">
