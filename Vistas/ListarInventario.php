@@ -374,11 +374,11 @@ foreach ($limiteModel->listarTodo() as $lim) {
     }
 
     th, td {
-      padding: 12px 16px;
-      text-align: left;
-      white-space: normal;
-      word-wrap: break-word;
-      max-width: 250px;
+     padding: 12px 16px;
+     text-align: left;
+     white-space: normal;
+     word-wrap: break-word;
+     max-width: 250px;
     }
 
     tbody tr:hover {
@@ -459,7 +459,7 @@ foreach ($limiteModel->listarTodo() as $lim) {
   <div class="dashboard-container">
   <nav class="sidebar">
     <h2>NextGen Distributors</h2>
-    <a href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="Dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
     
     <!-- Submenú Entradas -->
     <div class="menu-item open">
@@ -519,29 +519,34 @@ foreach ($limiteModel->listarTodo() as $lim) {
       <section class="content">
         <h2>Inventario</h2>
 
-        <div class="actions">
-          <form method="GET">
-            <input type="text" name="q" placeholder="Buscar por nombre o código..." value="<?= htmlspecialchars($search) ?>">
-            <select name="cat">
-              <option value="0">Todas las categorías</option>
-              <?php foreach ($catList as $c): ?>
-                <option value="<?= $c['id'] ?>" <?= $catId == $c['id'] ? 'selected' : '' ?>>
-                  <?= htmlspecialchars($c['nombre']) ?>
-                </option>
-              <?php endforeach; ?>
-            </select>
-             <select name="estado">
+<div class="actions">
+  <form method="GET">
+    <input type="text" name="q" placeholder="Buscar por nombre o código..." value="<?= htmlspecialchars($search) ?>">
+    <select name="cat">
+      <option value="0">Todas las categorías</option>
+      <?php foreach ($catList as $c): ?>
+        <option value="<?= $c['id'] ?>" <?= $catId == $c['id'] ? 'selected' : '' ?>>
+          <?= htmlspecialchars($c['nombre']) ?>
+        </option>
+      <?php endforeach; ?>
+    </select>
+    <select name="estado">
       <option value="">Todos los estados</option>
       <option value="bajo" <?= ($_GET['estado'] ?? '') === 'bajo' ? 'selected' : '' ?>>Stock bajo</option>
       <option value="excedido" <?= ($_GET['estado'] ?? '') === 'excedido' ? 'selected' : '' ?>>Stock excedido</option>
       <option value="agotado" <?= ($_GET['estado'] ?? '') === 'agotado' ? 'selected' : '' ?>>Agotado</option>
       <option value="ok" <?= ($_GET['estado'] ?? '') === 'ok' ? 'selected' : '' ?>>Stock OK</option>
     </select>
+    <button type="submit" class="btn-primary"><i class="bi bi-search"></i></button>
+  </form>
 
-            <button type="submit" class="btn-primary"><i class="bi bi-search"></i></button>
-          </form>
-          <a href="RegistrarInventario.php" class="btn-primary"><i class="bi bi-plus-lg"></i> Nuevo Inventario</a>
-        </div>
+  <a href="RegistrarInventario.php" class="btn-primary"><i class="bi bi-plus-lg"></i> Nuevo Inventario</a>
+
+  <a href="CompararInventario.php" class="btn-primary" style="margin-left: 12px;">
+    <i class="bi bi-upload"></i> Comparar Stock Físico
+  </a>
+</div>
+
 
         <?php if (!$productos): ?>
           <p>No se encontraron productos.</p>

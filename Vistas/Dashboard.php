@@ -1,13 +1,28 @@
 <?php
 session_start();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!isset($_SESSION['usuario_correo'])) {
     header('Location: login.php');
     exit();
 }
 
 $correo = $_SESSION['usuario_correo'];
+
+if (!isset($totalProductos)) {
+    require_once '../Modelos/DashboardModel.php';
+    $model = new DashboardModel();
+
+    $totalProductos = $model->obtenerTotalProductos();
+    $stockMinimo = $model->obtenerProductosConStockBajo();
+    $movimientosRecientes = $model->obtenerMovimientosRecientes();
+    $ultimosMovimientos = $model->obtenerUltimosMovimientos();
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -356,7 +371,7 @@ $correo = $_SESSION['usuario_correo'];
   <div class="dashboard-container">
   <nav class="sidebar">
     <h2>NextGen Distributors</h2>
-    <a href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="Dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
     
     <!-- Submenú Entradas -->
     <div class="menu-item">
@@ -386,7 +401,7 @@ $correo = $_SESSION['usuario_correo'];
 
   <a href="../Vistas/ListarInventario.php"><i class="bi bi-archive"></i> Inventario</a>
     <div class="menu-item">
-       <button type="button" class="menu-toggle">
+      <button type="button" class="menu-toggle">
         <i class="bi bi-clipboard-data"></i> Auditoria
         <i class="bi bi-chevron-down chevron"></i>
       </button>
@@ -395,6 +410,8 @@ $correo = $_SESSION['usuario_correo'];
         <a href="../Vistas/Historico.php">Historico</a>
       </div>
     </div>
+  
+    
 
     <!-- Submenú Usuarios -->
     <div class="menu-item">
@@ -404,11 +421,11 @@ $correo = $_SESSION['usuario_correo'];
       </button>
       <div class="submenu">
         <a href="RegistrarUsuario.php">Registrar Usuario</a>
-        <a href="EditarUsuario.php">Editar Usuario</a>
         <a href="ListarUsuario.php">Listar Usuario</a>
       </div>
     </div>
-  </nav>
+      </nav>
+  
 
     <main class="main-content">
       <header class="header">
@@ -431,69 +448,63 @@ $correo = $_SESSION['usuario_correo'];
         <h2>Bienvenido, <?= htmlspecialchars($correo) ?></h2>
 
         <div class="alert">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i> Atención: Hay 3 productos con stock bajo.
-        </div>
+  <i class="bi bi-exclamation-triangle-fill me-2"></i> Atención: Hay <?= $stockMinimo ?> productos con stock bajo.
+</div>
+
 
         <div class="card-group">
-          <div class="card card-primary">
-            <div>
-              <div class="card-title">Total de Productos</div>
-              <h2>128</h2>
-            </div>
-            <i class="bi bi-box-seam fs-1"></i>
-          </div>
-          <div class="card card-warning">
-            <div>
-              <div class="card-title">Stock Mínimo</div>
-              <h2>3</h2>
-            </div>
-            <i class="bi bi-exclamation-triangle fs-1"></i>
-          </div>
-          <div class="card card-success">
-            <div>
-              <div class="card-title">Movimientos Recientes</div>
-              <h2>12</h2>
-            </div>
-            <i class="bi bi-arrow-clockwise fs-1"></i>
-          </div>
-        </div>
+  <div class="card card-primary">
+    <div>
+      <div class="card-title">Total de Productos</div>
+      <h2><?= $totalProductos ?></h2>
+    </div>
+    <i class="bi bi-box-seam fs-1"></i>
+  </div>
+  <div class="card card-warning">
+    <div>
+      <div class="card-title">Stock Mínimo</div>
+      <h2><?= $stockMinimo ?></h2>
+    </div>
+    <i class="bi bi-exclamation-triangle fs-1"></i>
+  </div>
+  <div class="card card-success">
+    <div>
+      <div class="card-title">Movimientos Recientes</div>
+      <h2><?= $movimientosRecientes ?></h2>
+    </div>
+    <i class="bi bi-arrow-clockwise fs-1"></i>
+  </div>
+</div>
 
         <h4>Últimos Movimientos</h4>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Fecha</th>
-                <th>Usuario</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="badge bg-success">Entrada</span></td>
-                <td>Mouse Gamer</td>
-                <td>20</td>
-                <td>12/06/2025 14:20</td>
-                <td>admin@nextgen.com</td>
-              </tr>
-              <tr>
-                <td><span class="badge bg-danger">Salida</span></td>
-                <td>Teclado Mecánico</td>
-                <td>5</td>
-                <td>11/06/2025 10:15</td>
-                <td>tecnico1@nextgen.com</td>
-              </tr>
-              <tr>
-                <td><span class="badge bg-success">Entrada</span></td>
-                <td>Webcam HD</td>
-                <td>15</td>
-                <td>10/06/2025 09:45</td>
-                <td>admin@nextgen.com</td>
-              </tr>
-            </tbody>
-          </table>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Fecha</th>
+        <th>Usuario</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($ultimosMovimientos as $mov): ?>
+        <tr>
+          <td>
+            <span class="badge bg-<?= $mov['tipo'] === 'entrada' ? 'success' : 'danger' ?>">
+              <?= ucfirst($mov['tipo']) ?>
+            </span>
+          </td>
+          <td><?= htmlspecialchars($mov['producto']) ?></td>
+          <td><?= $mov['cantidad'] ?></td>
+          <td><?= date('d/m/Y H:i', strtotime($mov['fecha_hora'])) ?></td>
+          <td><?= htmlspecialchars($mov['usuario']) ?></td>
+        </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
         </div>
       </section>
 
@@ -556,7 +567,6 @@ $correo = $_SESSION['usuario_correo'];
   </script>
   <?php unset($_SESSION['bienvenida']); ?>
 <?php endif; ?>
-
 
 </body>
 </html>
