@@ -476,14 +476,12 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <table>
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nombre</th>
               </tr>
             </thead>
             <tbody>
               <?php foreach ($categorias as $c): ?>
                 <tr>
-                  <td><?= htmlspecialchars($c['id']) ?></td>
                   <td><?= htmlspecialchars($c['nombre']) ?></td>
                 </tr>
               <?php endforeach; ?>

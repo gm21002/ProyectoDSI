@@ -377,12 +377,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-container">
           <h1>Registrar Proveedor</h1>
 
-          <?php if (!empty($_SESSION['errores'])): ?>
-            <div class="error">
-              <ul><?php foreach ($_SESSION['errores'] as $e): ?><li><?= htmlspecialchars($e) ?></li><?php endforeach; ?></ul>
-            </div>
-            <?php unset($_SESSION['errores']); ?>
-          <?php endif; ?>
+              <?php if (!empty($_SESSION['errores'])): ?>
+        <div class="error">
+          <ul>
+            <?php foreach ($_SESSION['errores'] as $e): ?>
+              <li><?= htmlspecialchars($e) ?></li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+        <?php unset($_SESSION['errores']); ?>
+      <?php endif; ?>
 
           <form method="POST">
             <label for="nombre">Nombre del Proveedor:</label>
